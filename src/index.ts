@@ -170,13 +170,14 @@ export function renderMarkdownItTokens(tokens: Token[]): string {
   let i = 0
   while (i < tokens.length) {
     const token = tokens[i]
-    const renderer = token.type in renderers ? renderers[token.type] : (token: Token) => token.content
-    if (renderer) {
+    const renderer = renderers[token.type]
+    if (renderer)
       result += renderer(token, tokens, i)
-    }
-    else if (token.children) {
+    else if (token.children)
       result += renderMarkdownItTokens(token.children)
-    }
+    else
+      result += token.content
+
     i++
   }
   return result.replace(/\s+$/, '')
