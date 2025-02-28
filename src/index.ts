@@ -68,7 +68,7 @@ const renderers: TokenRenderer = {
   },
   code_block: token => `\n\`\`\`${token.info}\n${token.content.trim()}\n\`\`\`\n\n`,
   fence: token => `\n\`\`\`${token.info}\n${token.content.trim()}\n\`\`\`\n\n`,
-  blockquote_open: (token, tokens, index) => {
+  blockquote_open: (_token, tokens, index) => {
     const level = getBlockquoteNestingLevel(tokens, index)
     const prevToken = index > 0 ? tokens[index - 1] : null
     const prefix = prevToken && !prevToken.type.includes('blockquote') ? '\n' : ''
@@ -78,7 +78,7 @@ const renderers: TokenRenderer = {
   table_open: () => '\n',
   table_close: () => '\n\n',
   tr_open: () => '',
-  tr_close: (token, tokens, index) => {
+  tr_close: (_token, tokens, index) => {
     if (index > 0 && tokens[index - 1].type === 'thead_close') {
       const alignRow = getTableAlignmentRow(tokens, index)
       return `|\n${alignRow}\n`
@@ -109,6 +109,8 @@ const renderers: TokenRenderer = {
   s_open: () => '~~',
   s_close: () => '~~',
   image: token => `![${token.content}](${token.attrs?.[0][1] || ''}${token.attrs?.[1]?.[1] ? ` "${token.attrs[1][1]}"` : ''})`,
+  container_directives_open: token => `\n:::${token.info || ''}\n`,
+  container_directives_close: () => ':::\n\n',
 }
 
 function getListNestingLevel(tokens: Token[], currentIndex: number): number {
