@@ -111,6 +111,7 @@ const renderers: TokenRenderer = {
   image: token => `![${token.content}](${token.attrs?.[0][1] || ''}${token.attrs?.[1]?.[1] ? ` "${token.attrs[1][1]}"` : ''})`,
   container_directives_open: token => `\n:::${token.info || ''}\n`,
   container_directives_close: () => ':::\n\n',
+  html_block: token => token.content,
 }
 
 function getListNestingLevel(tokens: Token[], currentIndex: number): number {
@@ -169,7 +170,7 @@ export function renderMarkdownItTokens(tokens: Token[]): string {
   let i = 0
   while (i < tokens.length) {
     const token = tokens[i]
-    const renderer = renderers[token.type]
+    const renderer = token.type in renderers ? renderers[token.type] : (token: Token) => token.content
     if (renderer) {
       result += renderer(token, tokens, i)
     }
